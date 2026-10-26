@@ -3,7 +3,7 @@
   "description": "Create database backups and keep the latest N copies.",
   "autoload": {
     "psr-4": {
-      "Maksym\\LaraveBackupPackage\\": "src/"
+      "Maksym\\LaravelBackupPackage\\": "src/"
     }
   },
   "authors": [
