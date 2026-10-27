@@ -32,7 +32,7 @@ abstract class DatabaseDumper
         $path = $finder->find($this->dumpTool) ?? $finder->find(
             'mysqldump',
             null,
-            config('database-backup.path_to_dump_tool')
+            [config('database-backup.path_to_dump_tool')]
         );
 
         if (!$path) {
