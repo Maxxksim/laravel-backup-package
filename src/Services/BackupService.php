@@ -66,7 +66,7 @@ class BackupService
 
             } else {
                 $countToKeep = $countBackups - $max;
-                $filesToDelete = $backups->take($countToKeep);
+                $filesToDelete = $backups->take($countBackups - $countToKeep);
 
                 foreach ($filesToDelete as $filename => $date) {
                     File::delete($this->pathToDumpDir . $filename);
