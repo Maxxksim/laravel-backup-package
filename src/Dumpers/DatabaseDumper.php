@@ -16,10 +16,14 @@ abstract class DatabaseDumper
         set;
     }
 
+    abstract protected string $enVariablePSW {
+        get;
+        set;
+    }
+
     abstract protected function command(
         string $pathToDump,
         string $user,
-        string $password,
         string $host,
         string $port,
         string $database,
@@ -52,6 +56,9 @@ abstract class DatabaseDumper
         array  $options,
     ): ProcessResult
     {
-        return Process::run($this->command($pathToDump, $user, $password, $host, $port, $database, $options))->throw();
+        return Process::
+        env([$this->enVariablePSW => $password])
+            ->run($this->command($pathToDump, $user, $host, $port, $database, $options))
+            ->throw();
     }
 }
