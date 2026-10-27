@@ -18,7 +18,7 @@ class BackupCommand extends Command
         try {
             $infoMessage = $backupService->startDump($this->getMaxCopies());
         } catch (Exception $e) {
-            $this->error($e);
+            $this->error($e->getMessage());
             return self::FAILURE;
         }
 
