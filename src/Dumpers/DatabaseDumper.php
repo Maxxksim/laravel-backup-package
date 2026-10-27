@@ -28,8 +28,15 @@ abstract class DatabaseDumper
 
     protected function findDumpBinary(): string
     {
-        if (!($path = new ExecutableFinder()->find($this->dumpTool))) {
-            throw new RuntimeException("We coudn't find the dump tool on your system to do backup: $this->dumpTool");
+        $finder = new ExecutableFinder();
+        $path = $finder->find($this->dumpTool) ?? $finder->find(
+            'mysqldump',
+            null,
+            config('database-backup.path_to_dump_tool')
+        );
+
+        if (!$path) {
+            throw new RuntimeException("We couldn't find the dump tool on your system to do backup: $this->dumpTool");
         }
 
         return $path;
