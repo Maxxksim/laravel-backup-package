@@ -1,5 +1,5 @@
 {
-  "name": "maxxksim/larave-backup-package",
+  "name": "maxxksim/laravel-backup-package",
   "description": "Create database backups and keep the latest N copies.",
   "autoload": {
     "psr-4": {
