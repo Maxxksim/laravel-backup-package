@@ -51,27 +51,20 @@ class BackupService
         File::ensureDirectoryExists($this->pathToDumpDir);
 
         try {
-
+            $this->dump($dumper);
             $backups = $this->getSortedBackups();
-
             $countBackups = count($backups);
 
-            if ($countBackups < $max) {
-                $this->dump($dumper);
-
-            } elseif ($countBackups === $max) {
+            if ($countBackups === $max) {
                 $fileToDelete = $backups->keys()->first();
                 File::delete($this->pathToDumpDir . $fileToDelete);
-                $this->dump($dumper);
 
-            } else {
-                $countToKeep = $countBackups - $max;
-                $filesToDelete = $backups->take($countToKeep);
+            } elseif ($countBackups > $max) {
+                $filesToDelete = $backups->slice($countBackups - $max);
 
                 foreach ($filesToDelete as $filename => $date) {
                     File::delete($this->pathToDumpDir . $filename);
                 }
-                $this->dump($dumper);
             }
         } catch (Exception $e) {
             throw $e;
