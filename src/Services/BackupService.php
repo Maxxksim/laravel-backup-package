@@ -55,12 +55,8 @@ class BackupService
             $backups = $this->getSortedBackups();
             $countBackups = count($backups);
 
-            if ($countBackups === $max) {
-                $fileToDelete = $backups->keys()->first();
-                File::delete($this->pathToDumpDir . $fileToDelete);
-
-            } elseif ($countBackups > $max) {
-                $filesToDelete = $backups->slice($countBackups - $max);
+            if ($countBackups > $max) {
+                $filesToDelete = $backups->take($countBackups - $max);
 
                 foreach ($filesToDelete as $filename => $date) {
                     File::delete($this->pathToDumpDir . $filename);
