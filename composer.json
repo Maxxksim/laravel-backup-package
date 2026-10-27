@@ -19,7 +19,10 @@
     "laravel": {
       "providers": [
         "Maksym\\LaravelBackupPackage\\BackupPackageProvider"
-      ]
+      ],
+      "aliases": {
+        "Backup": "Maksym\\LaravelBackupPackage\\Facades\\BackupPackage"
+      }
     }
   },
   "require-dev": {
