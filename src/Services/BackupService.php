@@ -46,7 +46,7 @@ class BackupService
         /** @var DatabaseDumper $dumper */
         $dumper = app($this->dumpers[$this->driver]);
 
-        File::ensureDirectoryExists(dirname($this->pathToDumpDir));
+        File::ensureDirectoryExists($this->pathToDumpDir);
 
         try {
 
