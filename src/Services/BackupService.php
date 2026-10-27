@@ -28,7 +28,7 @@ class BackupService
     {
         $this->pathToDumpDir = config('database-backup.path_to_backup');
         $this->driver = config('database.default');
-        $this->options = config("backup.$this->driver.options");
+        $this->options = config("database-backup.$this->driver.options");
         $this->host = config("database.connections.$this->driver.host");
         $this->port = config("database.connections.$this->driver.port");
         $this->database = config("database.connections.$this->driver.database");
