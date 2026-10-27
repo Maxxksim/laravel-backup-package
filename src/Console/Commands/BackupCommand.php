@@ -1,6 +1,6 @@
 <?php
 
-namespace Maksym\LaravelBackupPackage\Commands;
+namespace Maksym\LaravelBackupPackage\Console\Commands;
 
 use Exception;
 use Illuminate\Console\Attributes\Signature;
