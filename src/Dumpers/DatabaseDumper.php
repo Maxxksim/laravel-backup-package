@@ -40,6 +40,6 @@ abstract class DatabaseDumper
         array  $options,
     ): ProcessResult
     {
-        return new Process()->run($this->command($pathToDump, $user, $password, $host, $port, $database, $options))->throw();
+        return Process::run($this->command($pathToDump, $user, $password, $host, $port, $database, $options))->throw();
     }
 }
