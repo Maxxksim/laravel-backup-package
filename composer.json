@@ -1,5 +1,5 @@
 {
-  "name": "maksym/larave-backup-package",
+  "name": "maxxksim/larave-backup-package",
   "description": "Create database backups and keep the latest N copies.",
   "autoload": {
     "psr-4": {
