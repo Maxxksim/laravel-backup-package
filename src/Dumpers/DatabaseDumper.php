@@ -7,6 +7,7 @@ namespace Maksym\LaravelBackupPackage\Dumpers;
 use Illuminate\Contracts\Process\ProcessResult;
 use Illuminate\Support\Facades\Process;
 use Symfony\Component\Process\ExecutableFinder;
+use RuntimeException;
 
 abstract class DatabaseDumper
 {
@@ -27,7 +28,11 @@ abstract class DatabaseDumper
 
     protected function findDumpBinary(): string
     {
-        return new ExecutableFinder()->find($this->dumpTool);
+        if (!($path = new ExecutableFinder()->find($this->dumpTool))) {
+            throw new RuntimeException("We coudn't find the dump tool on your system to do backup: $this->dumpTool");
+        }
+
+        return $path;
     }
 
     public function runDumpCommand(
