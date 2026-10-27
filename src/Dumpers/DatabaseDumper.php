@@ -1,37 +1,45 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Maksym\LaravelBackupPackage\Dumpers;
 
-use AllowDynamicProperties;
-use http\Encoding\Stream\Inflate;
+use Illuminate\Contracts\Process\ProcessResult;
+use Illuminate\Support\Facades\Process;
 use Symfony\Component\Process\ExecutableFinder;
-use Symfony\Component\Process\Process;
 
-
-class DatabaseDumper
+abstract class DatabaseDumper
 {
-    protected string $driver;
-    protected string $database;
-
-    protected string $options;
-    protected string $password;
-
-    public function __construct()
-    {
-        $this->driver = config('database.default');
-        $this->database = config('database.connections.' . $this->driver . '.database');
-        $this->options = config('backup.' . $this->driver . '.options');
-        $this->password = config('database.connections.' . $this->driver . '.password');
+    abstract protected string $dumpTool {
+        get;
+        set;
     }
 
-    public function findDumpBinary(): string
+    abstract protected function command(
+        string $pathToDump,
+        string $user,
+        string $password,
+        string $host,
+        string $port,
+        string $database,
+        array  $options,
+    ): array;
+
+    protected function findDumpBinary(): string
     {
-        return new ExecutableFinder()->find(static::DUMP_TOOL);
+        return new ExecutableFinder()->find($this->dumpTool);
     }
 
-    protected function backup(): void
+    public function runDumpCommand(
+        string $pathToDump,
+        string $user,
+        string $password,
+        string $host,
+        string $port,
+        string $database,
+        array  $options,
+    ): ProcessResult
     {
-        $process = new Process(static::command($this->password));
-        $process->run();
+        return new Process()->run($this->command($pathToDump, $user, $password, $host, $port, $database, $options))->throw();
     }
 }
