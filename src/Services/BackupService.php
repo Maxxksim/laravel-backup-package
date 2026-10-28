@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\File;
 use InvalidArgumentException;
 use Maksym\LaravelBackupPackage\Dumpers\DatabaseDumper;
 use Maksym\LaravelBackupPackage\Dumpers\MysqlDumper;
+use Maksym\LaravelBackupPackage\Dumpers\PgsqlDumper;
 use RuntimeException;
 
 class BackupService
@@ -23,6 +24,7 @@ class BackupService
 
     private array $dumpers = [
         'mysql' => MysqlDumper::class,
+        'pgsql' => PgsqlDumper::class,
     ];
 
     public function __construct()
