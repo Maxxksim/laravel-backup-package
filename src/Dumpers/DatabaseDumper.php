@@ -40,7 +40,9 @@ abstract class DatabaseDumper
         );
 
         if (!$path) {
-            throw new RuntimeException("We couldn't find the dump tool on your system to do backup: $this->dumpTool");
+            throw new RuntimeException(
+                "The backup package couldn't find the dump tool on your system to do backup: $this->dumpTool",
+            );
         }
 
         return $path;
