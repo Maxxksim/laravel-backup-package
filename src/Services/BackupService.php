@@ -23,11 +23,11 @@ class BackupService
     private string $user;
     private string $password;
     private array $dumpers;
+    private int $maxCopies;
+    private const int DEFAULT_MAX_COPIES = 1;
 
     public function __construct()
     {
-
-
         $this->pathToDumpDir = config('database-backup.path_to_backup');
         $this->driver = config('database.default');
         $this->options = config("database-backup.$this->driver.options");
@@ -36,6 +36,7 @@ class BackupService
         $this->database = config("database.connections.$this->driver.database");
         $this->user = config("database.connections.$this->driver.username");
         $this->password = config("database.connections.$this->driver.password");
+        $this->maxCopies = config('database-backup.max_copies');
         $this->dumpers = [
             'mysql' => new MysqlDumper(),
             'pgsql' => new PgsqlDumper(),
@@ -43,7 +44,7 @@ class BackupService
         ];
     }
 
-    public function startDump(int $keepMax = 1): bool
+    public function startDump(?int $maxCopies = null): bool
     {
         if (!array_key_exists($this->driver, $this->dumpers)) {
             throw new InvalidArgumentException(
@@ -59,6 +60,8 @@ class BackupService
             }
         }
 
+        $maxCopies = $this->getMaxCopies($maxCopies);
+
         /** @var DatabaseDumper $dumper */
         $dumper = $this->dumpers[$this->driver];
 
@@ -66,8 +69,8 @@ class BackupService
         $backups = $this->getSortedBackups();
         $countBackups = count($backups);
 
-        if ($countBackups > $keepMax) {
-            $filesToDelete = $backups->take($countBackups - $keepMax);
+        if ($countBackups > $maxCopies) {
+            $filesToDelete = $backups->take($countBackups - $maxCopies);
 
             foreach ($filesToDelete as $filename => $date) {
                 File::delete($this->pathToDumpDir . $filename);
@@ -115,5 +118,18 @@ class BackupService
             $this->database,
             $this->options,
         );
+    }
+
+    private function getMaxCopies(?int $receivedMax = null)
+    {
+        if (!$receivedMax) {
+            return $receivedMax;
+        }
+
+        if ($this->maxCopies === 0) {
+            return self::DEFAULT_MAX_COPIES;
+        }
+
+        return $this->maxCopies;
     }
 }
