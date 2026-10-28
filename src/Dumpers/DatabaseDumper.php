@@ -27,7 +27,7 @@ abstract class DatabaseDumper
         string $host,
         string $port,
         string $database,
-        array  $options,
+        array  $options = [],
     ): array;
 
     protected function findDumpBinary(): string
@@ -55,7 +55,7 @@ abstract class DatabaseDumper
         string $host,
         string $port,
         string $database,
-        array  $options,
+        array  $options = [],
     ): ProcessResult
     {
         return Process::
