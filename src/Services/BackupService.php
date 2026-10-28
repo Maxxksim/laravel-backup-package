@@ -7,9 +7,9 @@ use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use InvalidArgumentException;
-
 use Maksym\LaravelBackupPackage\Dumpers\DatabaseDumper;
 use Maksym\LaravelBackupPackage\Dumpers\MysqlDumper;
+use RuntimeException;
 
 class BackupService
 {
@@ -42,13 +42,21 @@ class BackupService
     public function startDump(int $keepMax = 1): string
     {
         if (!array_key_exists($this->driver, $this->dumpers)) {
-            throw new InvalidArgumentException("The package doesn't support the type of database: $this->driver");
+            throw new InvalidArgumentException(
+                "The backup package doesn't support the type of database: $this->driver",
+            );
+        }
+
+        if (!File::isDirectory($this->pathToDumpDir)) {
+            if (!File::makeDirectory($this->pathToDumpDir)) {
+                throw new RuntimeException(
+                    "The backup package couldn't create directory for the path: $this->pathToDumpDir",
+                );
+            }
         }
 
         /** @var DatabaseDumper $dumper */
         $dumper = app($this->dumpers[$this->driver]);
-
-        File::ensureDirectoryExists($this->pathToDumpDir);
 
         try {
             $this->dump($dumper);
