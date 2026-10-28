@@ -22,15 +22,12 @@ class BackupService
     private string $database;
     private string $user;
     private string $password;
-
-    private array $dumpers = [
-        'mysql' => MysqlDumper::class,
-        'pgsql' => PgsqlDumper::class,
-        'mariadb' => MariadbDumper::class,
-    ];
+    private array $dumpers;
 
     public function __construct()
     {
+
+
         $this->pathToDumpDir = config('database-backup.path_to_backup');
         $this->driver = config('database.default');
         $this->options = config("database-backup.$this->driver.options");
@@ -39,6 +36,11 @@ class BackupService
         $this->database = config("database.connections.$this->driver.database");
         $this->user = config("database.connections.$this->driver.username");
         $this->password = config("database.connections.$this->driver.password");
+        $this->dumpers = [
+            'mysql' => new MysqlDumper(),
+            'pgsql' => new PgsqlDumper(),
+            'mariadb' => new MariadbDumper(),
+        ];
     }
 
     public function startDump(int $keepMax = 1): bool
@@ -58,7 +60,7 @@ class BackupService
         }
 
         /** @var DatabaseDumper $dumper */
-        $dumper = app($this->dumpers[$this->driver]);
+        $dumper = $this->dumpers[$this->driver];
 
         $this->dump($dumper);
         $backups = $this->getSortedBackups();
