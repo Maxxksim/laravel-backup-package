@@ -11,7 +11,7 @@ use RuntimeException;
 
 abstract class DatabaseDumper
 {
-    abstract protected string $dumpTool {
+    abstract protected array $dumpTools {
         get;
         set;
     }
@@ -33,15 +33,23 @@ abstract class DatabaseDumper
     protected function findDumpBinary(): string
     {
         $finder = new ExecutableFinder();
-        $path = $finder->find($this->dumpTool) ?? $finder->find(
-            'mysqldump',
-            null,
-            [config('database-backup.path_to_dump_tool')]
-        );
+
+        foreach ($this->dumpTools as $dumpTool) {
+            $path = $finder->find($dumpTool) ?? $finder->find(
+                $dumpTool,
+                null,
+                [config('database-backup.path_to_dump_tool')]
+            );
+
+            if ($path) {
+                break;
+            }
+        }
 
         if (!$path) {
             throw new RuntimeException(
-                "The backup package couldn't find the dump tool on your system to do backup: $this->dumpTool",
+                'The backup package could not find the dump tool on your system to do backup:'
+                . implode(', ', $this->dumpTools) . '.',
             );
         }
 

@@ -4,7 +4,7 @@ namespace Maksym\LaravelBackupPackage\Dumpers;
 
 class PgsqlDumper extends DatabaseDumper
 {
-    public string $dumpTool = 'pg_dump';
+    public array $dumpTools = ['pg_dump'];
     protected string $enVariablePSW = 'PGPASSWORD';
 
     public function command(string $pathToDump, string $user, string $host, string $port, string $database, array $options = []): array

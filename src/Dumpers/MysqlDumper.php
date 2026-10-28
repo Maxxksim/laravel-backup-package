@@ -7,7 +7,7 @@ namespace Maksym\LaravelBackupPackage\Dumpers;
 
 class MysqlDumper extends DatabaseDumper
 {
-    public string $dumpTool = 'mysqldump';
+    public array $dumpTools = ['mysqldump'];
     protected string $enVariablePSW = 'MYSQL_PWD';
 
     public function command(string $pathToDump, string $user, string $host, string $port, string $database, array $options = []): array
