@@ -16,13 +16,13 @@ class BackupCommand extends Command
     public function handle(BackupService $backupService): int
     {
         try {
-            $infoMessage = $backupService->startDump($this->getMaxCopies());
+            $backupService->startDump($this->getMaxCopies());
         } catch (Exception $e) {
             $this->error($e->getMessage());
             return self::FAILURE;
         }
 
-        $this->info($infoMessage);
+        $this->info('Database backups have created successfully.');
 
         return self::SUCCESS;
     }
