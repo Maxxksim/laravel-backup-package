@@ -122,11 +122,15 @@ class BackupService
 
     private function getMaxCopies(?int $receivedMax = null)
     {
-        if (!$receivedMax) {
+        if (!is_null($receivedMax)) {
+
+            if ($receivedMax <= 0) {
+                return self::DEFAULT_MAX_COPIES;
+            }
             return $receivedMax;
         }
 
-        if ($this->maxCopies === 0) {
+        if ($this->maxCopies <= 0) {
             return self::DEFAULT_MAX_COPIES;
         }
 
