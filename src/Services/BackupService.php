@@ -39,7 +39,7 @@ class BackupService
     }
 
 
-    public function startDump(int $max): string
+    public function startDump(int $keepMax = 1): string
     {
         if (!array_key_exists($this->driver, $this->dumpers)) {
             throw new InvalidArgumentException("The package doesn't support the type of database: $this->driver");
@@ -55,8 +55,8 @@ class BackupService
             $backups = $this->getSortedBackups();
             $countBackups = count($backups);
 
-            if ($countBackups > $max) {
-                $filesToDelete = $backups->take($countBackups - $max);
+            if ($countBackups > $keepMax) {
+                $filesToDelete = $backups->take($countBackups - $keepMax);
 
                 foreach ($filesToDelete as $filename => $date) {
                     File::delete($this->pathToDumpDir . $filename);
