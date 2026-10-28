@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Maksym\LaravelBackupPackage\Dumpers;
 
-
 class MysqlDumper extends DatabaseDumper
 {
     public array $dumpTools = ['mysqldump'];
+
     protected string $enVariablePSW = 'MYSQL_PWD';
 
     public function command(string $pathToDump, string $user, string $host, string $port, string $database, array $options = []): array
@@ -18,7 +18,7 @@ class MysqlDumper extends DatabaseDumper
             '-h', $host,
             '-P', $port,
             ...$options,
-            '--result-file=' . $pathToDump,
+            '--result-file='.$pathToDump,
             $database,
         ];
     }

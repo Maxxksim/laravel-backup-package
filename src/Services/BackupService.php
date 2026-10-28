@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Maksym\LaravelBackupPackage\Services;
 
 use Carbon\Carbon;
@@ -15,15 +17,25 @@ use RuntimeException;
 class BackupService
 {
     private string $pathToDumpDir;
+
     private string $driver;
+
     private array $options;
+
     private string $host;
+
     private string $port;
+
     private string $database;
+
     private string $user;
+
     private string $password;
+
     private array $dumpers;
+
     private int $maxCopies;
+
     private const int DEFAULT_MAX_COPIES = 1;
 
     public function __construct()
@@ -38,22 +50,22 @@ class BackupService
         $this->password = config("database.connections.$this->driver.password");
         $this->maxCopies = config('database-backup.max_copies');
         $this->dumpers = [
-            'mysql' => new MysqlDumper(),
-            'pgsql' => new PgsqlDumper(),
-            'mariadb' => new MariadbDumper(),
+            'mysql' => new MysqlDumper,
+            'pgsql' => new PgsqlDumper,
+            'mariadb' => new MariadbDumper,
         ];
     }
 
     public function startDump(?int $maxCopies = null): bool
     {
-        if (!array_key_exists($this->driver, $this->dumpers)) {
+        if (! array_key_exists($this->driver, $this->dumpers)) {
             throw new InvalidArgumentException(
                 "The backup package doesn't support the type of database: $this->driver",
             );
         }
 
-        if (!File::isDirectory($this->pathToDumpDir)) {
-            if (!File::makeDirectory($this->pathToDumpDir)) {
+        if (! File::isDirectory($this->pathToDumpDir)) {
+            if (! File::makeDirectory($this->pathToDumpDir)) {
                 throw new RuntimeException(
                     "The backup package couldn't create directory for the path: $this->pathToDumpDir",
                 );
@@ -73,7 +85,7 @@ class BackupService
             $filesToDelete = $backups->take($countBackups - $maxCopies);
 
             foreach ($filesToDelete as $filename => $date) {
-                File::delete($this->pathToDumpDir . $filename);
+                File::delete($this->pathToDumpDir.$filename);
             }
         }
 
@@ -82,7 +94,7 @@ class BackupService
 
     private function generatePathToDump(): string
     {
-        return $this->pathToDumpDir . $this->database . '_' . now()->format('Y-m-d_His') . '.sql';
+        return $this->pathToDumpDir.$this->database.'_'.now()->format('Y-m-d_His').'.sql';
     }
 
     private function getSortedBackups(): Collection
@@ -94,10 +106,10 @@ class BackupService
         foreach ($files as $file) {
             $filename = $file->getBasename('.sql');
 
-            if (!str_starts_with($filename, $this->database . '_')) {
+            if (! str_starts_with($filename, $this->database.'_')) {
                 continue;
             }
-            $offset = mb_strlen($this->database . '_');
+            $offset = mb_strlen($this->database.'_');
             $datetimeString = substr($filename, $offset);
             $datetime = Carbon::createFromFormat('Y-m-d_His', $datetimeString);
 
@@ -122,11 +134,11 @@ class BackupService
 
     private function getMaxCopies(?int $receivedMax = null)
     {
-        if (!is_null($receivedMax)) {
-
+        if (! is_null($receivedMax)) {
             if ($receivedMax <= 0) {
                 return self::DEFAULT_MAX_COPIES;
             }
+
             return $receivedMax;
         }
 

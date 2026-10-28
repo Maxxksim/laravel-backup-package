@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Maksym\LaravelBackupPackage\Facades;
 
-
 use Illuminate\Support\Facades\Facade;
 use Maksym\LaravelBackupPackage\Services\BackupService;
 

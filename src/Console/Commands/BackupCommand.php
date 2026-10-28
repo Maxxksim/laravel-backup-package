@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Maksym\LaravelBackupPackage\Console\Commands;
 
 use Exception;
@@ -19,6 +21,7 @@ class BackupCommand extends Command
             $backupService->startDump($this->getMaxCopies());
         } catch (Exception $e) {
             $this->error($e->getMessage());
+
             return self::FAILURE;
         }
 
@@ -35,7 +38,7 @@ class BackupCommand extends Command
             ['options' => ['min_range' => 1]],
         );
 
-        if (!$max) {
+        if (! $max) {
             throw new InvalidArgumentException('The --max option must be a valid integer greater than 0.');
         }
 

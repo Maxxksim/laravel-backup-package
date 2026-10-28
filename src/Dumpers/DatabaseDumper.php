@@ -6,8 +6,8 @@ namespace Maksym\LaravelBackupPackage\Dumpers;
 
 use Illuminate\Contracts\Process\ProcessResult;
 use Illuminate\Support\Facades\Process;
-use Symfony\Component\Process\ExecutableFinder;
 use RuntimeException;
+use Symfony\Component\Process\ExecutableFinder;
 
 abstract class DatabaseDumper
 {
@@ -27,18 +27,18 @@ abstract class DatabaseDumper
         string $host,
         string $port,
         string $database,
-        array  $options = [],
+        array $options = [],
     ): array;
 
     protected function findDumpBinary(): string
     {
-        $finder = new ExecutableFinder();
+        $finder = new ExecutableFinder;
 
         foreach ($this->dumpTools as $dumpTool) {
             $path = $finder->find($dumpTool) ?? $finder->find(
                 $dumpTool,
                 null,
-                [config('database-backup.path_to_dump_tool')]
+                [config('database-backup.path_to_dump_tool')],
             );
 
             if ($path) {
@@ -46,10 +46,10 @@ abstract class DatabaseDumper
             }
         }
 
-        if (!$path) {
+        if (! $path) {
             throw new RuntimeException(
                 'The backup package could not find the dump tool on your system to do backup:'
-                . implode(', ', $this->dumpTools) . '.',
+                .implode(', ', $this->dumpTools).'.',
             );
         }
 
@@ -63,11 +63,9 @@ abstract class DatabaseDumper
         string $host,
         string $port,
         string $database,
-        array  $options = [],
-    ): ProcessResult
-    {
-        return Process::
-        env([$this->enVariablePSW => $password])
+        array $options = [],
+    ): ProcessResult {
+        return Process::env([$this->enVariablePSW => $password])
             ->run($this->command($pathToDump, $user, $host, $port, $database, $options))
             ->throw();
     }
