@@ -3,7 +3,6 @@
 namespace Maksym\LaravelBackupPackage\Services;
 
 use Carbon\Carbon;
-use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use InvalidArgumentException;
@@ -38,8 +37,7 @@ class BackupService
         $this->password = config("database.connections.$this->driver.password");
     }
 
-
-    public function startDump(int $keepMax = 1): string
+    public function startDump(int $keepMax = 1): bool
     {
         if (!array_key_exists($this->driver, $this->dumpers)) {
             throw new InvalidArgumentException(
@@ -58,23 +56,19 @@ class BackupService
         /** @var DatabaseDumper $dumper */
         $dumper = app($this->dumpers[$this->driver]);
 
-        try {
-            $this->dump($dumper);
-            $backups = $this->getSortedBackups();
-            $countBackups = count($backups);
+        $this->dump($dumper);
+        $backups = $this->getSortedBackups();
+        $countBackups = count($backups);
 
-            if ($countBackups > $keepMax) {
-                $filesToDelete = $backups->take($countBackups - $keepMax);
+        if ($countBackups > $keepMax) {
+            $filesToDelete = $backups->take($countBackups - $keepMax);
 
-                foreach ($filesToDelete as $filename => $date) {
-                    File::delete($this->pathToDumpDir . $filename);
-                }
+            foreach ($filesToDelete as $filename => $date) {
+                File::delete($this->pathToDumpDir . $filename);
             }
-        } catch (Exception $e) {
-            throw $e;
         }
 
-        return 'Database backups have created successfully.';
+        return true;
     }
 
     private function generatePathToDump(): string
