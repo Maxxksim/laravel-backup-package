@@ -17,6 +17,7 @@ class MariadbDumper extends DatabaseDumper
             '-u', $user,
             '-h', $host,
             '-P', $port,
+            '--single-transaction',
             ...$options,
             '--result-file='.$pathToDump,
             $database,
