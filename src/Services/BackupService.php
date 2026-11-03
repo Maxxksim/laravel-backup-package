@@ -30,16 +30,12 @@ class BackupService
     private string $user;
 
     private string $password;
-
-    private array $dumpers;
-
     private int $maxCopies;
 
     private const int DEFAULT_MAX_COPIES = 1;
 
-    public function __construct()
+    public function __construct(private readonly array $dumpers)
     {
-        $this->setDumpers();
         $this->setSettings();
     }
 
@@ -56,23 +52,13 @@ class BackupService
 
         $this->driver = $driver;
         $this->pathToDumpDir = config('database-backup.path_to_backup');
-        $this->options = config("database-backup.$this->driver.options");
-        $this->host = config("database.connections.$this->driver.host");
-        $this->port = config("database.connections.$this->driver.port");
-        $this->database = config("database.connections.$this->driver.database");
-        $this->user = config("database.connections.$this->driver.username");
-        $this->password = config("database.connections.$this->driver.password");
+        $this->options = config("database-backup.$defaultConnection.options", []);
+        $this->host = config("database.connections.$defaultConnection.host");
+        $this->port = config("database.connections.$defaultConnection.port");
+        $this->database = config("database.connections.$defaultConnection.database");
+        $this->user = config("database.connections.$defaultConnection.username");
+        $this->password = config("database.connections.$defaultConnection.password");
         $this->maxCopies = config('database-backup.max_copies');
-
-    }
-
-    private function setDumpers(): void
-    {
-        $this->dumpers = [
-            'mysql' => new MysqlDumper,
-            'pgsql' => new PgsqlDumper,
-            'mariadb' => new MariadbDumper,
-        ];
     }
 
     private function checkDumperExists(string $driver): bool
@@ -153,7 +139,7 @@ class BackupService
         );
     }
 
-    private function getMaxCopies(?int $receivedMax = null)
+    private function getMaxCopies(?int $receivedMax = null): int
     {
         if (!is_null($receivedMax)) {
 
