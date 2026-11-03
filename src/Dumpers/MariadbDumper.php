@@ -6,7 +6,7 @@ namespace Maksym\LaravelBackupPackage\Dumpers;
 
 class MariadbDumper extends DatabaseDumper
 {
-    public array $dumpTools = ['mysqldump', 'mariadb-dump'];
+    public array $dumpTools = ['mariadb-dump', 'mysqldump'];
 
     protected string $enVariablePSW = 'MYSQL_PWD';
 
