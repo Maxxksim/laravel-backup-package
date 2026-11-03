@@ -28,19 +28,13 @@ class BackupCommand extends Command
         return self::SUCCESS;
     }
 
-    private function getMaxCopies()
+    private function getMaxCopies(): ?int
     {
-        if (!$this->hasOption('max')) {
+        if (!($option = $this->option('max'))) {
             return null;
         }
 
-        $max = filter_var(
-            $this->option('max'),
-            FILTER_VALIDATE_INT,
-            [
-                'options' => ['min_range' => 1],
-            ],
-        );
+        $max = filter_var($option, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
 
         if (!$max) {
             throw new InvalidArgumentException('The --max option must be a valid integer greater than 0.');
