@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace Maksym\LaravelBackupPackage\Console\Commands;
 
 use Exception;
-use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use InvalidArgumentException;
 use Maksym\LaravelBackupPackage\Services\BackupService;
 
-#[Signature('backup:create {--max= : max copies}')]
 class BackupCommand extends Command
 {
+    protected $signature = 'backup:create {--max= : max copies}';
+
     public function handle(BackupService $backupService): int
     {
         try {
