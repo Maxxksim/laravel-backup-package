@@ -40,8 +40,23 @@ class BackupService
 
     public function __construct()
     {
+        $this->setDumpers();
+        $this->setSettings();
+    }
+
+    private function setSettings(): void
+    {
+        $defaultConnection = config('database.default');
+        $driver = config("database.connections.$defaultConnection.driver");
+
+        if (!$this->checkDumperExists($driver)) {
+            throw new InvalidArgumentException(
+                "The backup package doesn't support the type of database: $driver",
+            );
+        }
+
+        $this->driver = $driver;
         $this->pathToDumpDir = config('database-backup.path_to_backup');
-        $this->driver = config('database.default');
         $this->options = config("database-backup.$this->driver.options");
         $this->host = config("database.connections.$this->driver.host");
         $this->port = config("database.connections.$this->driver.port");
@@ -49,6 +64,11 @@ class BackupService
         $this->user = config("database.connections.$this->driver.username");
         $this->password = config("database.connections.$this->driver.password");
         $this->maxCopies = config('database-backup.max_copies');
+
+    }
+
+    private function setDumpers(): void
+    {
         $this->dumpers = [
             'mysql' => new MysqlDumper,
             'pgsql' => new PgsqlDumper,
@@ -56,13 +76,16 @@ class BackupService
         ];
     }
 
+    private function checkDumperExists(string $driver): bool
+    {
+        if (!array_key_exists($driver, $this->dumpers)) {
+            return false;
+        }
+        return true;
+    }
+
     public function startDump(?int $maxCopies = null): bool
     {
-        if (!array_key_exists($this->driver, $this->dumpers)) {
-            throw new InvalidArgumentException(
-                "The backup package doesn't support the type of database: $this->driver",
-            );
-        }
         File::ensureDirectoryExists($this->pathToDumpDir);
 
         $maxCopies = $this->getMaxCopies($maxCopies);
