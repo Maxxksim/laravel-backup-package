@@ -36,13 +36,13 @@ class BackupService
 
     public function __construct(private readonly array $dumpers)
     {
-        $this->setSettings();
+
     }
 
     private function setSettings(): void
     {
         $defaultConnection = config('database.default');
-        $driver = config("database.connections.$defaultConnection.driver");
+        $driver = config("database.connections.$defaultConnection.driver", '');
 
         if (!$this->checkDumperExists($driver)) {
             throw new InvalidArgumentException(
@@ -61,17 +61,14 @@ class BackupService
         $this->maxCopies = config('database-backup.max_copies');
     }
 
-    private function checkDumperExists(?string $driver): bool
+    private function checkDumperExists(string $driver): bool
     {
-        if (!array_key_exists($driver, $this->dumpers)) {
-            return false;
-        }
-
-        return true;
+        return array_key_exists($driver, $this->dumpers);
     }
 
     public function startDump(?int $maxCopies = null): bool
     {
+        $this->setSettings();
         File::ensureDirectoryExists($this->pathToDumpDir);
 
         $maxCopies = $this->getMaxCopies($maxCopies);
