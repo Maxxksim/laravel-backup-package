@@ -12,7 +12,6 @@ use Maksym\LaravelBackupPackage\Dumpers\DatabaseDumper;
 use Maksym\LaravelBackupPackage\Dumpers\MariadbDumper;
 use Maksym\LaravelBackupPackage\Dumpers\MysqlDumper;
 use Maksym\LaravelBackupPackage\Dumpers\PgsqlDumper;
-use RuntimeException;
 
 class BackupService
 {
