@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Maksym\LaravelBackupPackage\Dumpers;
 
-use Illuminate\Contracts\Process\ProcessResult;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Process;
 use RuntimeException;
 use Symfony\Component\Process\ExecutableFinder;
@@ -63,10 +63,21 @@ abstract class DatabaseDumper
         string $host,
         string $port,
         string $database,
-        array $options = [],
-    ): ProcessResult {
-        return Process::env([$this->enVariablePSW => $password])
-            ->run($this->command($pathToDump, $user, $host, $port, $database, $options))
-            ->throw();
+        array  $options = [],
+    ): void
+    {
+        $tmpPathToDump = $pathToDump . '.tmp';
+
+        try {
+            Process::env([$this->enVariablePSW => $password])
+                ->run($this->command($tmpPathToDump, $user, $host, $port, $database, $options))
+                ->throw();
+            File::move($tmpPathToDump, $pathToDump);
+
+        } catch (\Throwable $e) {
+            File::delete($tmpPathToDump);
+
+            throw $e;
+        }
     }
 }
