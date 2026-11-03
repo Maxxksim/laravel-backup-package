@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Maksym\LaravelBackupPackage\Tests;
 
-use Illuminate\Support\Carbon;
+use Carbon\Carbon;
+use Carbon\CarbonInterface;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use Maksym\LaravelBackupPackage\BackupPackageProvider;
@@ -57,7 +58,7 @@ abstract class TestCase extends Orchestra
         return collect($backups);
     }
 
-    function generateFakePathToDump(string $directoryForBackups, string $database, Carbon $datetime): string
+    function generateFakePathToDump(string $directoryForBackups, string $database, CarbonInterface $datetime): string
     {
         return rtrim($directoryForBackups, '/') .
             '/' .

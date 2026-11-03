@@ -15,8 +15,6 @@ beforeEach(function () {
     File::ensureDirectoryExists($this->directoryForBackups);
 
     config()->set('database-backup.path_to_backup', $this->directoryForBackups);
-
-
 });
 
 afterEach(function () {
@@ -54,3 +52,20 @@ it('dumping keep only last N files', function () {
         ->and(array_intersect($deletedFilesNames, $backupsFromDirectory))->toBeEmpty();
 });
 
+it("artisan command takes max copies from config if it doesn't get from option", function () {
+    $maxCopies = 7;
+    config()->set('database-backup.max_copies', $maxCopies);
+    $existingBackups = 7;
+
+    $dbConnection = config('database.default');
+    $this->makeFakeBackups($existingBackups,
+        $this->directoryForBackups,
+        config("database.connections.$dbConnection.database"),
+    );
+
+    $this->app->instance(BackupService::class, $this->makeServiceWithFakeDumper());
+
+    $this->artisan('backup:create')->assertSuccessful();
+
+    expect(File::files($this->directoryForBackups))->toHaveCount($maxCopies);
+});
