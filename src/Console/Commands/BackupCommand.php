@@ -13,8 +13,6 @@ use Maksym\LaravelBackupPackage\Services\BackupService;
 #[Signature('backup:create {--max= : max copies}')]
 class BackupCommand extends Command
 {
-    private const int DEFAULT_MAX_COPIES = 1;
-
     public function handle(BackupService $backupService): int
     {
         try {
@@ -32,13 +30,19 @@ class BackupCommand extends Command
 
     private function getMaxCopies()
     {
+        if (!$this->hasOption('max')) {
+            return null;
+        }
+
         $max = filter_var(
-            $this->option('max') ?? self::DEFAULT_MAX_COPIES,
+            $this->option('max'),
             FILTER_VALIDATE_INT,
-            ['options' => ['min_range' => 1]],
+            [
+                'options' => ['min_range' => 1],
+            ],
         );
 
-        if (! $max) {
+        if (!$max) {
             throw new InvalidArgumentException('The --max option must be a valid integer greater than 0.');
         }
 
