@@ -81,6 +81,7 @@ class BackupService
         if (!array_key_exists($driver, $this->dumpers)) {
             return false;
         }
+
         return true;
     }
 
@@ -110,7 +111,12 @@ class BackupService
 
     private function generatePathToDump(): string
     {
-        return $this->pathToDumpDir . $this->database . '_' . now()->format('Y-m-d_His') . '.sql';
+        return rtrim($this->pathToDumpDir, '/') .
+            '/' .
+            $this->database .
+            '_' .
+            now()->format('Y-m-d_His') .
+            '.sql';
     }
 
     private function getSortedBackups(): Collection
@@ -151,6 +157,7 @@ class BackupService
     private function getMaxCopies(?int $receivedMax = null)
     {
         if (!is_null($receivedMax)) {
+
             if ($receivedMax <= 0) {
                 return self::DEFAULT_MAX_COPIES;
             }
