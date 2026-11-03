@@ -3,6 +3,7 @@
   "description": "Create database backups and keep the latest N copies.",
   "autoload": {
     "psr-4": {
+      "Maksym\\LaravelBackupPackage\\Tests\\": "tests/",
       "Maksym\\LaravelBackupPackage\\": "src/"
     }
   },
@@ -30,6 +31,12 @@
   },
   "require-dev": {
     "orchestra/testbench": "^11.3",
-    "laravel/pint": "^1.32"
+    "laravel/pint": "^1.32",
+    "pestphp/pest": "^5.3"
+  },
+  "config": {
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
+    }
   }
 }
