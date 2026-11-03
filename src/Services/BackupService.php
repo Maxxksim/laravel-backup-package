@@ -61,7 +61,7 @@ class BackupService
         $this->maxCopies = config('database-backup.max_copies');
     }
 
-    private function checkDumperExists(string $driver): bool
+    private function checkDumperExists(?string $driver): bool
     {
         if (!array_key_exists($driver, $this->dumpers)) {
             return false;
